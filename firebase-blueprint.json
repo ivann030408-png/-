@@ -1,0 +1,533 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated player combat profile and statistics (no PII).",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the player."
+        },
+        "nickname": {
+          "type": "string",
+          "description": "Display callsign of the player (1-30 chars)."
+        },
+        "totalKills": {
+          "type": "integer",
+          "description": "Cumulative bot and player eliminations."
+        },
+        "totalWins": {
+          "type": "integer",
+          "description": "Cumulative combat matches won."
+        },
+        "coins": {
+          "type": "integer",
+          "description": "In-game currency earned from completing daily missions (0..10000000)."
+        },
+        "totalMatches": {
+          "type": "integer",
+          "description": "Total matches played."
+        },
+        "bestStreak": {
+          "type": "integer",
+          "description": "Highest single-life elimination streak."
+        },
+        "selectedSkin": {
+          "type": "string",
+          "enum": ["CLASSIC", "SPEC_OPS", "GOLDEN_KING", "CYBER_NEON", "SHADOW_NINJA", "ARCTIC_FROST"],
+          "description": "Equipped character skin synced across devices."
+        },
+        "weaponSkin": {
+          "type": "string",
+          "enum": ["CLASSIC", "TACTICAL"],
+          "description": "Equipped weapon finish synced across devices."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when created (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "userId",
+        "nickname",
+        "totalKills",
+        "totalMatches",
+        "bestStreak",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "GameRoom": {
+      "title": "GameRoom",
+      "description": "Multiplayer arena room for Chicken Gun 3D online sessions.",
+      "type": "object",
+      "properties": {
+        "roomCode": {
+          "type": "string",
+          "description": "Uppercase alphanumeric invite code (4-12 chars)."
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable room name (2-40 chars)."
+        },
+        "hostId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the room creator."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["open", "closed"],
+          "description": "Lifecycle state of the room. 'closed' is terminal."
+        },
+        "maxPlayers": {
+          "type": "integer",
+          "description": "Maximum allowed players (2-8)."
+        },
+        "mapId": {
+          "type": "string",
+          "enum": ["MAIN_ARENA", "TURBO_SPEEDWAY", "TACTICAL_COMPOUND"],
+          "description": "Active 3D arena map selected by the host."
+        },
+        "gameMode": {
+          "type": "string",
+          "enum": ["SANDBOX", "PVP", "RACING"],
+          "description": "Online gameplay ruleset (humans only, no bots)."
+        },
+        "privateRoom": {
+          "type": "boolean",
+          "description": "Whether joining requires the room password."
+        },
+        "password": {
+          "type": "string",
+          "description": "Optional access password for private rooms (0-24 chars)."
+        },
+        "pinned": {
+          "type": "boolean",
+          "description": "Whether the room is pinned to the top of the active rooms browser."
+        },
+        "joinLocked": {
+          "type": "boolean",
+          "description": "Whether new players are temporarily blocked from joining."
+        },
+        "allowGuestPropSpawn": {
+          "type": "boolean",
+          "description": "Whether non-host players may spawn 3D props."
+        },
+        "allowGuestVehicleSpawn": {
+          "type": "boolean",
+          "description": "Whether non-host players may spawn vehicles."
+        },
+        "friendlyFire": {
+          "type": "boolean",
+          "description": "Whether players can deal PvP weapon damage to each other."
+        },
+        "infiniteAmmo": {
+          "type": "boolean",
+          "description": "Whether weapons have unlimited ammunition in this room."
+        },
+        "godMode": {
+          "type": "boolean",
+          "description": "Whether players are invulnerable to damage in this room."
+        },
+        "memberUids": {
+          "type": "array",
+          "description": "Bounded list of up to 8 member UIDs currently in the room."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when room was created (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last room update (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "roomCode",
+        "name",
+        "hostId",
+        "status",
+        "maxPlayers",
+        "memberUids",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "RoomPlayer": {
+      "title": "RoomPlayer",
+      "description": "Live 3D position, combat, and weapon state of a player inside a multiplayer room.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID matching the document ID."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Player combat callsign (1-30 chars)."
+        },
+        "x": {
+          "type": "number",
+          "description": "World X coordinate (-200..200)."
+        },
+        "y": {
+          "type": "number",
+          "description": "World Y coordinate (-200..200)."
+        },
+        "z": {
+          "type": "number",
+          "description": "World Z coordinate (-200..200)."
+        },
+        "yaw": {
+          "type": "number",
+          "description": "Horizontal look yaw in degrees."
+        },
+        "pitch": {
+          "type": "number",
+          "description": "Vertical look pitch in degrees."
+        },
+        "hp": {
+          "type": "integer",
+          "description": "Current health points (0..100)."
+        },
+        "kills": {
+          "type": "integer",
+          "description": "Current room kill count (0..9999)."
+        },
+        "weapon": {
+          "type": "string",
+          "enum": ["PISTOL", "RIFLE", "RPG"],
+          "description": "Currently equipped 3D weapon."
+        },
+        "drivingVehicle": {
+          "type": "boolean",
+          "description": "Whether the player is currently driving a 3D vehicle."
+        },
+        "shooting": {
+          "type": "boolean",
+          "description": "Whether the player recently fired a shot."
+        },
+        "godMode": {
+          "type": "boolean",
+          "description": "Optional per-player invulnerability granted or revoked by the room host."
+        },
+        "canBuild": {
+          "type": "boolean",
+          "description": "Optional per-player prop/vehicle build privilege override set by the room host."
+        },
+        "memberUids": {
+          "type": "array",
+          "description": "Denormalized member UIDs from the parent room for secure list queries."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when player joined the room."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest state sync."
+        }
+      },
+      "required": [
+        "userId",
+        "displayName",
+        "x",
+        "y",
+        "z",
+        "yaw",
+        "pitch",
+        "hp",
+        "kills",
+        "weapon",
+        "drivingVehicle",
+        "shooting",
+        "memberUids",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "RoomProp": {
+      "title": "RoomProp",
+      "description": "Sandbox-spawned 3D structure or vehicle synced inside a multiplayer room.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the player who spawned this 3D prop."
+        },
+        "propType": {
+          "type": "string",
+          "enum": ["CRATE", "WALL", "RAMP", "BARREL", "CAR"],
+          "description": "Type of 3D sandbox object."
+        },
+        "x": {
+          "type": "number",
+          "description": "World X coordinate (-200..200)."
+        },
+        "y": {
+          "type": "number",
+          "description": "World Y coordinate (-200..200)."
+        },
+        "z": {
+          "type": "number",
+          "description": "World Z coordinate (-200..200)."
+        },
+        "yaw": {
+          "type": "number",
+          "description": "Y-axis rotation in degrees."
+        },
+        "hp": {
+          "type": "integer",
+          "description": "Remaining durability (0..500)."
+        },
+        "destroyed": {
+          "type": "boolean",
+          "description": "Whether the object has been destroyed/detonated."
+        },
+        "memberUids": {
+          "type": "array",
+          "description": "Denormalized member UIDs from the parent room for secure list queries."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when spawned."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest update."
+        }
+      },
+      "required": [
+        "ownerId",
+        "propType",
+        "x",
+        "y",
+        "z",
+        "yaw",
+        "hp",
+        "destroyed",
+        "memberUids",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "RoomMessage": {
+      "title": "RoomMessage",
+      "description": "Real-time multiplayer text chat message sent inside an online room lobby or match.",
+      "type": "object",
+      "properties": {
+        "senderId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the message author."
+        },
+        "senderName": {
+          "type": "string",
+          "description": "Display callsign of the sender (1-30 chars)."
+        },
+        "text": {
+          "type": "string",
+          "description": "Chat message body (1-200 chars)."
+        },
+        "memberUids": {
+          "type": "array",
+          "description": "Denormalized member UIDs from the parent room for secure list queries."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when message was sent (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest metadata sync (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "senderId",
+        "senderName",
+        "text",
+        "memberUids",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "Public global leaderboard stats for an authenticated player (strictly no PII).",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID matching the document ID."
+        },
+        "nickname": {
+          "type": "string",
+          "description": "Public player callsign (1-30 chars)."
+        },
+        "kills": {
+          "type": "integer",
+          "description": "Cumulative eliminations (0..1000000)."
+        },
+        "wins": {
+          "type": "integer",
+          "description": "Cumulative combat match wins (0..1000000)."
+        },
+        "matchesPlayed": {
+          "type": "integer",
+          "description": "Total combat matches played (0..1000000)."
+        },
+        "bestStreak": {
+          "type": "integer",
+          "description": "Highest elimination streak in a single life (0..10000)."
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"],
+          "description": "Visibility flag enabling rule-enforced global leaderboard queries."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when entry was created (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest leaderboard sync (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "userId",
+        "nickname",
+        "kills",
+        "wins",
+        "matchesPlayed",
+        "bestStreak",
+        "visibility",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "DailyMission": {
+      "title": "DailyMission",
+      "description": "Per-user daily mission task awarding in-game coins upon completion.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owning player."
+        },
+        "dayKey": {
+          "type": "string",
+          "description": "Calendar day key in YYYY-MM-DD format."
+        },
+        "slotIndex": {
+          "type": "integer",
+          "description": "Daily mission slot index (0..2)."
+        },
+        "missionType": {
+          "type": "string",
+          "enum": [
+            "KILLS",
+            "DRIVE_METERS",
+            "BUILD_PROPS",
+            "DESTROY_PROPS",
+            "ROADKILL",
+            "PLAY_MATCHES",
+            "WIN_MATCH",
+            "EXPLOSIONS"
+          ],
+          "description": "Gameplay objective category."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable task label (1-80 chars)."
+        },
+        "target": {
+          "type": "integer",
+          "description": "Target quantity required to complete the mission (1..10000)."
+        },
+        "progress": {
+          "type": "integer",
+          "description": "Current accumulated progress (0..target)."
+        },
+        "rewardCoins": {
+          "type": "integer",
+          "description": "In-game coin reward granted when claimed (10..1000)."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "completed", "claimed"],
+          "description": "Lifecycle state; 'claimed' is terminal."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when assigned (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest progress or claim update."
+        }
+      },
+      "required": [
+        "userId",
+        "dayKey",
+        "slotIndex",
+        "missionType",
+        "title",
+        "target",
+        "progress",
+        "rewardCoins",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private player combat profile, coins balance, and lifetime statistics."
+    },
+    "/users/{userId}/daily_missions/{missionId}": {
+      "schema": { "$ref": "#/entities/DailyMission" },
+      "description": "Three randomized daily tasks per user per calendar day with progress and coin reward claim state."
+    },
+    "/rooms/{roomId}": {
+      "schema": { "$ref": "#/entities/GameRoom" },
+      "description": "Online multiplayer arena rooms discoverable while open."
+    },
+    "/rooms/{roomId}/players/{playerId}": {
+      "schema": { "$ref": "#/entities/RoomPlayer" },
+      "description": "Live 3D combat chicken state for each room member."
+    },
+    "/rooms/{roomId}/props/{propId}": {
+      "schema": { "$ref": "#/entities/RoomProp" },
+      "description": "Synced 3D sandbox objects built by players inside the room."
+    },
+    "/rooms/{roomId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/RoomMessage" },
+      "description": "Real-time text chat messages exchanged by members in the room lobby and match."
+    },
+    "/leaderboard/{userId}": {
+      "schema": { "$ref": "#/entities/LeaderboardEntry" },
+      "description": "Global leaderboard standings readable by authenticated players and writable only by the owner."
+    }
+  }
+}
